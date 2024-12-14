@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BankingApp.Data.Entities.Common.Constants
+﻿namespace BankingApp.Data.Entities.Common.Constants
 {
     public class ValidationConstants
     {
@@ -17,8 +11,8 @@ namespace BankingApp.Data.Entities.Common.Constants
         public const int MinEmailLength = 1;
         public const int MaxEmailLength = 120;
 
-        public const int MinPasswordLength = 8;
-        public const int MaxPasswordLength = 30;
+        public const int MinPasswordLength = 1;
+        public const int MaxPasswordLength = 120;
 
         public const int AccountNumberLength = 10;
         
