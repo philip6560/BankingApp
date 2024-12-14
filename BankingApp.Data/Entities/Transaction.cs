@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BankingApp.Data.Entities
 {
+    [Table("Transactions")]
     public class Transaction : BaseEntity<long>
     {
         [StringLength(ValidationConstants.ReferenceNumberLength, 

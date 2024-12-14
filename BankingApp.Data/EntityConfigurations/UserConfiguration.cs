@@ -8,7 +8,7 @@ namespace BankingApp.Data.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<User> modelBuilder)
         {
-            modelBuilder.HasIndex(x => x.Email).IsUnique();
+            modelBuilder.HasIndex(x => x.EmailAddress).IsUnique();
         }
     }
 }

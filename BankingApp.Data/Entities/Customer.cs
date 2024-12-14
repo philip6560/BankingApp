@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BankingApp.Data.Entities
 {
+    [Table("Customers")]
     public class Customer : BaseEntity<long>
     {
         public long UserId { get; set; }
@@ -25,5 +26,8 @@ namespace BankingApp.Data.Entities
         public string? Address { get; set; }
 
         public DateTime? LastModifiedAt { get; set; }
+
+        [NotMapped]
+        public string FullName => $"{FirstName} {LastName}";
     }
 }
