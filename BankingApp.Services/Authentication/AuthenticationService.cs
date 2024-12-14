@@ -42,7 +42,7 @@ namespace BankingApp.Services.Authentication
                 || string.IsNullOrWhiteSpace(request.Audience) 
                 || string.IsNullOrWhiteSpace(request.SecurityKey)) 
             {
-                return Result<string>.Failure(AuthenticationServiceErrors.);  
+                return Result<string>.Failure(AuthenticationServiceErrors.TokenGeneration);  
             }
 
             var encodedSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(request.SecurityKey));
