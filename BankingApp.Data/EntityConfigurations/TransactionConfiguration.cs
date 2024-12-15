@@ -8,7 +8,7 @@ namespace BankingApp.Data.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Transaction> modelBuilder)
         {
-            modelBuilder.HasIndex(x => x.ReferenceNumber).IsUnique();
+            modelBuilder.HasIndex(x => x.ReferenceNumber);
 
             modelBuilder.OwnsOne(x => x.Amount).WithOwner();
         }

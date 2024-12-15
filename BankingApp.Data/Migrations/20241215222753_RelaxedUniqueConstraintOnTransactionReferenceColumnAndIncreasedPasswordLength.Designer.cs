@@ -4,6 +4,7 @@ using BankingApp.Data;
 using BankingApp.Data.Entities.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BankingApp.Data.Migrations
 {
     [DbContext(typeof(BankingAppDbContext))]
-    partial class BankingAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241215222753_RelaxedUniqueConstraintOnTransactionReferenceColumnAndIncreasedPasswordLength")]
+    partial class RelaxedUniqueConstraintOnTransactionReferenceColumnAndIncreasedPasswordLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

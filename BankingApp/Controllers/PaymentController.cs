@@ -36,7 +36,7 @@ namespace BankingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions(GetTransactionsRequest request)
+        public async Task<IActionResult> GetTransactions([FromQuery]GetTransactionsRequest request)
         {
             var currentUserId = GetCurrentUserId();
 

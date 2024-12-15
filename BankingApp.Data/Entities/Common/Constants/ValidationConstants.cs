@@ -12,7 +12,7 @@
         public const int MaxEmailLength = 120;
 
         public const int MinPasswordLength = 1;
-        public const int MaxPasswordLength = 120;
+        public const int MaxPasswordLength = 128;
 
         public const int AccountNumberLength = 10;
         
