@@ -1,5 +1,6 @@
 ﻿using BankingApp.Services.Account.Abstraction;
 using BankingApp.Services.Account.Dtos;
+using BankingApp.Services.Common.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace BankingApp.Controllers
     {
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> Create(CreateAccountRequest request) 
         {
             var result = await accountService.CreateAccount(request);
@@ -30,13 +32,14 @@ namespace BankingApp.Controllers
         }
 
         [HttpPatch]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> Update(UpdateAccountRequest request) 
         {
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 
             {
-                return Unauthorized();
+                return CustomUnauthorized();
             }
 
             var result = await accountService.UpdateAccount((long)currentUserId, request);
@@ -50,13 +53,15 @@ namespace BankingApp.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(GetAccountDetailsResponse))]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> Get() 
         {
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 
             {
-                return Unauthorized();
+                return CustomUnauthorized();
             }
 
             var result = await accountService.GetAccountDetails(new GetAccountDetailsRequest 
@@ -73,6 +78,8 @@ namespace BankingApp.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(GetBeneficiaryResponse))]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> GetBeneficiary([FromQuery]GetBeneficiaryRequest request) 
         {
             var result = await accountService.GetBeneficiary(request);

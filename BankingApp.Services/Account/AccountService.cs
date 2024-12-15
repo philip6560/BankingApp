@@ -4,6 +4,7 @@ using BankingApp.Data.UnitOfWok.Abstractions;
 using BankingApp.Services.Account.Abstraction;
 using BankingApp.Services.Account.Dtos;
 using BankingApp.Services.Account.Utils;
+using BankingApp.Services.Common;
 using BankingApp.Services.Common.Response;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ namespace BankingApp.Services.Account
                         select new GetAccountDetailsResponse 
                         {
                             FullName = c.FullName,
+                            CurrentBalance = a.Balance.ToMoneyDto(),
                             EmailAddress = u.EmailAddress,
                             AccountNumber = a.AccountNumber,
                             Address = c.Address,

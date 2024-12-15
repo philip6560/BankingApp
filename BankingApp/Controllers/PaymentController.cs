@@ -1,4 +1,5 @@
-﻿using BankingApp.Services.Payment.Abstraction;
+﻿using BankingApp.Services.Common.Response;
+using BankingApp.Services.Payment.Abstraction;
 using BankingApp.Services.Payment.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,13 +17,14 @@ namespace BankingApp.Controllers
         : BaseController(identityOptions)
     {
         [HttpPost]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> TransferMoney(TransferMoneyRequest request)
         {
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null)
             {
-                return Unauthorized();
+                return CustomUnauthorized();
             }
 
             var result = await paymentService.TransferMoney((long)currentUserId, request);
@@ -36,13 +38,15 @@ namespace BankingApp.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(GetTransactionsResponse))]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> GetTransactions([FromQuery]GetTransactionsRequest request)
         {
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 
             {
-                return Unauthorized();
+                return CustomUnauthorized();
             }
 
             var result = await paymentService.GetTransactions((long)currentUserId, request);

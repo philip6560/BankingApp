@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BankingApp.Services.Common.Response;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,6 +13,9 @@ namespace BankingApp.Controllers
         {
             _identityOptions = identityOptions.Value;
         }
+        
+        protected UnauthorizedObjectResult CustomUnauthorized()
+            => new(new Error("Authentication", "Current user is not logged in"));
 
         protected long? GetCurrentUserId() 
         {

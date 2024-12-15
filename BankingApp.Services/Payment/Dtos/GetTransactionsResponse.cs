@@ -1,4 +1,5 @@
 ﻿using BankingApp.Data.Entities.Common.Enums;
+using BankingApp.Services.Common.Dtos;
 
 namespace BankingApp.Services.Payment.Dtos
 {
@@ -8,7 +9,7 @@ namespace BankingApp.Services.Payment.Dtos
 
         public string To { get; init; }
 
-        public decimal Amount { get; init; }
+        public MoneyDto Amount { get; init; }
 
         public TransactionStatus Status { get; init; }
 

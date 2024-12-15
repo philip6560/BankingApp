@@ -1,5 +1,6 @@
 ﻿using BankingApp.Services.Authentication.Abstraction;
 using BankingApp.Services.Authentication.Dtos;
+using BankingApp.Services.Common.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,8 @@ namespace BankingApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(string))]
+        [ProducesResponseType(400, Type = typeof(Error))]
         public async Task<IActionResult> Authenticate(AuthenticationRequest request) 
         {
             var tokenGenerationResult = await authenticationService.Authenticate(request);

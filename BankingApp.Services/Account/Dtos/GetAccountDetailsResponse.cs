@@ -1,8 +1,12 @@
-﻿namespace BankingApp.Services.Account.Dtos
+﻿using BankingApp.Services.Common.Dtos;
+
+namespace BankingApp.Services.Account.Dtos
 {
     public record GetAccountDetailsResponse
     {
         public string FullName { get; init; }
+
+        public MoneyDto CurrentBalance { get; init; }
 
         public string AccountNumber { get; init; }
 

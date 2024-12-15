@@ -23,7 +23,7 @@ namespace BankingApp.Services.Payment
                 {
                     From = x.Sender.Customer.FullName,
                     To = x.Recipient.Customer.FullName,
-                    Amount = x.Amount.Amount,
+                    Amount = x.Amount.ToMoneyDto(),
                     CreatedAt = x.CreatedAt,
                     Status = x.Status,
                 });
