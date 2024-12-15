@@ -1,8 +1,10 @@
-﻿using BankingApp.Data.UnitOfWok.Abstractions;
+﻿using BankingApp.Data.Entities;
+using BankingApp.Data.UnitOfWok.Abstractions;
 using BankingApp.Services.Authentication.Abstraction;
 using BankingApp.Services.Authentication.Dtos;
 using BankingApp.Services.Authentication.Utils;
 using BankingApp.Services.Common.Response;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,29 +13,46 @@ using System.Text;
 
 namespace BankingApp.Services.Authentication
 {
-    public class AuthenticationService(IUnitOfWork unitOfWork) : IAuthenticationService
+    public class AuthenticationService(IUnitOfWork unitOfWork, IPasswordHasher<User> passwordHasher) : IAuthenticationService
     {
         public async Task<Result<TokenGenerationRequest>> Authenticate(AuthenticationRequest request)
         {
             var query = from u in unitOfWork.UserRepository.GetAll()
                        join c in unitOfWork.CustomerRepository.GetAll() on u.Id equals c.UserId
-                       where u.EmailAddress == request.EmailAddress && u.Password == request.Password
-                       select new TokenGenerationRequest 
+                       where u.EmailAddress == request.EmailAddress
+                       select new 
                        {
                            UserId = u.Id,
-                           FirstName = c.FirstName,
-                           LastName = c.LastName,
-                           EmailAddress = u.EmailAddress,
+                           c.FirstName,
+                           c.LastName,
+                           u.EmailAddress,
+                           HashedPassword = u.Password,
                        };
 
-            var user = await query.AsNoTracking().FirstOrDefaultAsync();
+            var queryResult = await query.AsNoTracking().FirstOrDefaultAsync();
 
-            if (user == null) 
+            if (queryResult == null) 
             {
                 return Result<TokenGenerationRequest>.Failure(AuthenticationServiceErrors.InvalidEmailOrPassword);
             }
 
-            return Result<TokenGenerationRequest>.Success(user);
+            var passwordHashResult = passwordHasher.VerifyHashedPassword(new User 
+            {
+                EmailAddress = queryResult.EmailAddress,
+            }, queryResult.HashedPassword, request.Password);
+
+            if (passwordHashResult == PasswordVerificationResult.Failed)
+            {
+                return Result<TokenGenerationRequest>.Failure(AuthenticationServiceErrors.InvalidEmailOrPassword);
+            }
+
+            return Result<TokenGenerationRequest>.Success(new TokenGenerationRequest 
+            { 
+                EmailAddress = queryResult.EmailAddress,
+                UserId = queryResult.UserId,
+                FirstName = queryResult.FirstName,
+                LastName = queryResult.LastName,
+            });
         }
 
         public Result<string> GenerateAuthenticationToken(TokenGenerationRequest request)

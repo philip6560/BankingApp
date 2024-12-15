@@ -5,15 +5,18 @@ using BankingApp.Services.Account.Abstraction;
 using BankingApp.Services.Account.Dtos;
 using BankingApp.Services.Account.Utils;
 using BankingApp.Services.Common.Response;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankingApp.Services.Account
 {
-    public class AccountService(IUnitOfWork unitOfWork) : IAccountService
+    public class AccountService(IUnitOfWork unitOfWork, IPasswordHasher<User> passwordHasher) : IAccountService
     {
         public async Task<Result<bool>> CreateAccount(CreateAccountRequest request)
         {
-            var user = new User { EmailAddress = request.EmailAddress, Password = request.Password};
+            var user = new User { EmailAddress = request.EmailAddress};
+            var hashedPassword = passwordHasher.HashPassword(user, request.Password);
+            user.Password = hashedPassword;
             await unitOfWork.UserRepository.InsertAsync(user);
 
             var customer = new Customer { 

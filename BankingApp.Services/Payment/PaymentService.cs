@@ -79,10 +79,13 @@ namespace BankingApp.Services.Payment
             Data.Entities.Account recipientAccount,
             TransferMoneyRequest request)
         {
+            var lastModifiedAt = DateTime.UtcNow;
             senderAccount.Balance -= request.Amount.ToMoney();
+            senderAccount.LastModifiedAt = lastModifiedAt;
             await unitOfWork.AccountRepository.UpdateAsync(senderAccount);
 
             recipientAccount.Balance += request.Amount.ToMoney();
+            recipientAccount.LastModifiedAt = lastModifiedAt;
             await unitOfWork.AccountRepository.UpdateAsync(recipientAccount);
         }
 
