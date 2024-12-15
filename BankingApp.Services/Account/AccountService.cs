@@ -36,12 +36,12 @@ namespace BankingApp.Services.Account
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<GetAccountDetailsResponse>> GetAccountDetails(long userId, GetAccountDetailsRequest request)
+        public async Task<Result<GetAccountDetailsResponse>> GetAccountDetails(GetAccountDetailsRequest request)
         {
             var query = from u in unitOfWork.UserRepository.GetAll()
                         join c in unitOfWork.CustomerRepository.GetAll() on u.Id equals c.UserId
                         join a in unitOfWork.AccountRepository.GetAll() on c.Id equals a.CustomerId
-                        where u.Id == userId
+                        where u.Id == request.UserId
                         select new GetAccountDetailsResponse 
                         {
                             FullName = c.FullName,

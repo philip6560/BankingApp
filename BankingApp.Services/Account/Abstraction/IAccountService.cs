@@ -7,7 +7,7 @@ namespace BankingApp.Services.Account.Abstraction
     {
         Task<Result<bool>> CreateAccount(CreateAccountRequest request);
 
-        Task<Result<GetAccountDetailsResponse>> GetAccountDetails(long userId, GetAccountDetailsRequest request);
+        Task<Result<GetAccountDetailsResponse>> GetAccountDetails(GetAccountDetailsRequest request);
 
         Task<Result<bool>> UpdateAccount(long userId, UpdateAccountRequest request);
 

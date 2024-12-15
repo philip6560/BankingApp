@@ -11,20 +11,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using BankingApp.Data.UnitOfWok;
+using BankingApp.Data.Repositories.Abstractions;
+using BankingApp.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddScoped<IUnitOfWork>();
-
-builder.Services.AddTransient<IAccountService, AccountService>();
-builder.Services.AddTransient<IPaymentService, PaymentService>();
-builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 builder.Services.AddDbContext<BankingAppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
         options => options.MapEnum<TransactionStatus>());
 });
+
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 builder.Services.AddControllers();
 

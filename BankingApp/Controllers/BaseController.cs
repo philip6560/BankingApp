@@ -13,7 +13,7 @@ namespace BankingApp.Controllers
             _identityOptions = identityOptions.Value;
         }
 
-        public long? GetCurrentUserId() 
+        protected long? GetCurrentUserId() 
         {
             var nameId = User.Claims
                 .Where(x => x.Type == _identityOptions.ClaimsIdentity.UserIdClaimType)

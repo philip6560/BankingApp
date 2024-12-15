@@ -19,11 +19,6 @@ namespace BankingApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Create(CreateAccountRequest request) 
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var result = await accountService.CreateAccount(request);
 
             if (result.IsError) 
@@ -31,17 +26,12 @@ namespace BankingApp.Controllers
                 return BadRequest(result.Error);
             }
 
-            return Created();
+            return Ok();
         }
 
         [HttpPatch]
         public async Task<IActionResult> Update(UpdateAccountRequest request) 
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 
@@ -60,13 +50,8 @@ namespace BankingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(GetAccountDetailsRequest request) 
+        public async Task<IActionResult> Get() 
         {
-            if (!ModelState.IsValid) 
-            {
-                return BadRequest();
-            }
-
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 
@@ -74,7 +59,10 @@ namespace BankingApp.Controllers
                 return Unauthorized();
             }
 
-            var result = await accountService.GetAccountDetails((long)currentUserId, request);
+            var result = await accountService.GetAccountDetails(new GetAccountDetailsRequest 
+            {
+                UserId = (long)currentUserId
+            });
 
             if (result.IsError) 
             {
@@ -85,13 +73,8 @@ namespace BankingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBeneficiary(GetBeneficiaryRequest request) 
+        public async Task<IActionResult> GetBeneficiary([FromQuery]GetBeneficiaryRequest request) 
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var result = await accountService.GetBeneficiary(request);
 
             if (result.IsError) 

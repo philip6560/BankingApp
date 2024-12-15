@@ -18,11 +18,6 @@ namespace BankingApp.Controllers
         [HttpPost]
         public async Task<IActionResult> TransferMoney(TransferMoneyRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null)
@@ -43,11 +38,6 @@ namespace BankingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTransactions(GetTransactionsRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 

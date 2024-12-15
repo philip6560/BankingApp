@@ -7,6 +7,7 @@ using BankingApp.Services.Payment.Abstraction;
 using BankingApp.Services.Payment.Dtos;
 using Microsoft.EntityFrameworkCore;
 using BankingApp.Data.Entities.Common.Enums;
+using BankingApp.Services.Payment.Utils;
 
 namespace BankingApp.Services.Payment
 {
@@ -48,15 +49,20 @@ namespace BankingApp.Services.Payment
             if (recipientAccount == null) 
             {
                 return Result<bool>
-                    .Failure(new Error("Payment.TransferMoney", $"Account with account number {request.AccountNumber} does not exist."));
+                    .Failure(PaymentServicesErrors.AccountNotFound(request.AccountNumber));
             }
 
             var senderAccount = accounts.Where(x => x.AccountNumber != request.AccountNumber).First();
 
-            if (senderAccount?.Balance < request.Amount.ToMoney()) 
+            if (senderAccount!.Balance.Currency != request.Amount.Currency) 
             {
                 return Result<bool>
-                    .Failure(new Error("Payment.TransferMoney", "Insufficient funds."));
+                    .Failure(PaymentServicesErrors.CurrencyMismatch(senderAccount.Balance.Currency, request.Amount.Currency));
+            }
+
+            if (senderAccount!.Balance < request.Amount.ToMoney()) 
+            {
+                return Result<bool>.Failure(PaymentServicesErrors.InsufficientFunds);
             }
 
             await InitiateMoneyTransfer(senderAccount, recipientAccount, request);
