@@ -10,16 +10,11 @@ namespace BankingApp.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class AccountController : BaseController
+    public class AccountController(
+        IOptions<IdentityOptions> identityOptions,
+        IAccountService accountService)
+        : BaseController(identityOptions)
     {
-        private readonly IAccountService _accountService;
-
-        public AccountController(IOptions<IdentityOptions> identityOptions, IAccountService accountService)
-            : base(identityOptions)
-        {
-            _accountService = accountService;   
-        }
-
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Create(CreateAccountRequest request) 
@@ -29,7 +24,7 @@ namespace BankingApp.Controllers
                 return BadRequest();
             }
 
-            var result = await _accountService.CreateAccount(request);
+            var result = await accountService.CreateAccount(request);
 
             if (result.IsError) 
             {
@@ -54,7 +49,7 @@ namespace BankingApp.Controllers
                 return Unauthorized();
             }
 
-            var result = await _accountService.UpdateAccount((long)currentUserId, request);
+            var result = await accountService.UpdateAccount((long)currentUserId, request);
 
             if (result.IsError) 
             {
@@ -79,7 +74,7 @@ namespace BankingApp.Controllers
                 return Unauthorized();
             }
 
-            var result = await _accountService.GetAccountDetails((long)currentUserId, request);
+            var result = await accountService.GetAccountDetails((long)currentUserId, request);
 
             if (result.IsError) 
             {
@@ -97,7 +92,7 @@ namespace BankingApp.Controllers
                 return BadRequest();
             }
 
-            var result = await _accountService.GetBeneficiary(request);
+            var result = await accountService.GetBeneficiary(request);
 
             if (result.IsError) 
             {

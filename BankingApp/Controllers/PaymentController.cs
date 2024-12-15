@@ -10,18 +10,17 @@ namespace BankingApp.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class PaymentController : BaseController
+    public class PaymentController(IOptions<IdentityOptions> identityOptions, IPaymentService paymentService) 
+        : BaseController(identityOptions)
     {
-        private readonly IPaymentService _paymentService;
-
-        public PaymentController(IOptions<IdentityOptions> identityOptions, IPaymentService paymentService) : base(identityOptions)
-        {
-            _paymentService = paymentService;
-        }
-
         [HttpPost]
         public async Task<IActionResult> TransferMoney(TransferMoneyRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null)
@@ -29,7 +28,7 @@ namespace BankingApp.Controllers
                 return Unauthorized();
             }
 
-            var result = await _paymentService.TransferMoney((long)currentUserId, request);
+            var result = await paymentService.TransferMoney((long)currentUserId, request);
 
             if (result.IsError)
             {
@@ -42,6 +41,11 @@ namespace BankingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTransactions(GetTransactionsRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId == null) 
@@ -49,7 +53,7 @@ namespace BankingApp.Controllers
                 return Unauthorized();
             }
 
-            var result = await _paymentService.GetTransactions((long)currentUserId, request);
+            var result = await paymentService.GetTransactions((long)currentUserId, request);
 
             if (result.IsError) 
             {
