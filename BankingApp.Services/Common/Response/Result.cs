@@ -23,6 +23,8 @@
 
         public T? Data { get; }
 
+        public bool IsError => !IsSuccess;
+
         public static Result<T> Success(T data) => new(true, Error.None, data);
 
         public static Result<T> Success() => new(true, Error.None);

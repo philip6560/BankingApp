@@ -31,7 +31,7 @@ namespace BankingApp.Controllers
 
             var result = await _accountService.CreateAccount(request);
 
-            if (!result.IsSuccess) 
+            if (result.IsError) 
             {
                 return BadRequest(result.Error);
             }
@@ -39,7 +39,7 @@ namespace BankingApp.Controllers
             return Created();
         }
 
-        [HttpPost]
+        [HttpPatch]
         public async Task<IActionResult> Update(UpdateAccountRequest request) 
         {
             if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace BankingApp.Controllers
 
             var result = await _accountService.UpdateAccount((long)currentUserId, request);
 
-            if (!result.IsSuccess) 
+            if (result.IsError) 
             {
                 return BadRequest(result.Error);
             }
@@ -81,7 +81,7 @@ namespace BankingApp.Controllers
 
             var result = await _accountService.GetAccountDetails((long)currentUserId, request);
 
-            if (!result.IsSuccess) 
+            if (result.IsError) 
             {
                 return BadRequest(result.Error);
             }
@@ -99,7 +99,7 @@ namespace BankingApp.Controllers
 
             var result = await _accountService.GetBeneficiary(request);
 
-            if (!result.IsSuccess) 
+            if (result.IsError) 
             {
                 return BadRequest(result.Error);
             }
