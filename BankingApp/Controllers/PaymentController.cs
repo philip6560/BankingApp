@@ -10,7 +10,9 @@ namespace BankingApp.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class PaymentController(IOptions<IdentityOptions> identityOptions, IPaymentService paymentService) 
+    public class PaymentController(
+        IOptions<IdentityOptions> identityOptions,
+        IPaymentService paymentService) 
         : BaseController(identityOptions)
     {
         [HttpPost]
