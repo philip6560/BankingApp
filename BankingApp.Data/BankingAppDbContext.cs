@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankingApp.Data
 {
-    public class BankingAppDbContext : DbContext
+    public class BankingAppDbContext(DbContextOptions<BankingAppDbContext> options) : DbContext(options)
     {
 
         public DbSet<User> Users { get; set; }
