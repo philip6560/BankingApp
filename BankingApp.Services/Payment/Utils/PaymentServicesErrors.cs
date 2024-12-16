@@ -10,9 +10,12 @@ namespace BankingApp.Services.Payment.Utils
         public static Error CurrencyMismatch(string senderCurrency, string recipientCurrency) =>
             new("Payment.TransferMoney",
                 $"Transfer request cannot be made between sender " +
-                $"currency {senderCurrency} and recipient currency {recipientCurrency}");
+                $"currency {senderCurrency} and recipient currency {recipientCurrency}.");
 
         public static Error InsufficientFunds =
             new("Payment.TransferMoney", "Insufficient funds.");
+        
+        public static Error ConcurrencyUpdate =
+            new("Payment.TransferMoney", "Kindly retry, an error occurred.");
     }
 }

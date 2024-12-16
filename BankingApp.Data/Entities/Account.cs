@@ -21,5 +21,8 @@ namespace BankingApp.Data.Entities
         public Customer Customer { get; set; }
 
         public DateTime? LastModifiedAt { get; set; }
+
+        [ConcurrencyCheck]
+        public Guid Version { get; set; }
     }
 }

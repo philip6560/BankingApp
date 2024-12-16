@@ -69,9 +69,7 @@ namespace BankingApp.Services.Payment
 
             await CreateTransactionEntry(senderAccount, recipientAccount, request);
 
-            await unitOfWork.SaveChangesAsync();
-
-            return Result<bool>.Success(true);
+            return await FinalizeMoneyTransfer();
         }
 
         private async Task InitiateMoneyTransfer(
@@ -80,12 +78,15 @@ namespace BankingApp.Services.Payment
             TransferMoneyRequest request)
         {
             var lastModifiedAt = DateTime.UtcNow;
+
             senderAccount.Balance -= request.Amount.ToMoney();
             senderAccount.LastModifiedAt = lastModifiedAt;
+            senderAccount.Version = Guid.NewGuid();
             await unitOfWork.AccountRepository.UpdateAsync(senderAccount);
 
             recipientAccount.Balance += request.Amount.ToMoney();
             recipientAccount.LastModifiedAt = lastModifiedAt;
+            recipientAccount.Version = Guid.NewGuid();
             await unitOfWork.AccountRepository.UpdateAsync(recipientAccount);
         }
 
@@ -116,6 +117,20 @@ namespace BankingApp.Services.Payment
                 ReferenceNumber = senderTransactionEntry.ReferenceNumber,
             };
             await unitOfWork.TransactionRepository.InsertAsync(recipientTransactionEntry);
+        }
+
+        private async Task<Result<bool>> FinalizeMoneyTransfer() 
+        {
+            try
+            {
+                await unitOfWork.SaveChangesAsync();
+
+                return Result<bool>.Success(true);
+            }
+            catch (DbUpdateConcurrencyException) 
+            {
+                return Result<bool>.Failure(PaymentServicesErrors.ConcurrencyUpdate);
+            }
         }
 
         private string GenerateTransactionReferenceNumber() => $"{Guid.NewGuid().ToString().Substring(1, 17).Replace("_", "-")}";
