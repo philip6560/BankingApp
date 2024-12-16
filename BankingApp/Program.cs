@@ -16,6 +16,7 @@ using BankingApp.Data.Repositories.Abstractions;
 using BankingApp.Data.Repositories;
 using BankingApp.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,10 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson()
+    .AddJsonOptions(options 
+    => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options => options.TokenValidationParameters = new()
