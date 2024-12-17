@@ -9,6 +9,8 @@ using NSubstitute;
 using Shouldly;
 using BankingApp.Data.Entities.Common.Enums;
 using MockQueryable;
+using Microsoft.EntityFrameworkCore;
+using NSubstitute.ExceptionExtensions;
 
 namespace BankingApp.Tests.Payment.Services;
 
@@ -208,6 +210,43 @@ public class TransferMoneyUnitTests
         result.Error.Description.ShouldBe(
             PaymentServicesErrors.CurrencyMismatch(senderAccount.Balance.Currency, request.Amount.Currency).Description
         );
+    }
+
+    [Fact]
+    public async Task GivenConcurrencyConflict_ShouldReturnFailure()
+    {
+        // Arrange
+        var userId = 1L;
+        var request = new TransferMoneyRequest
+        {
+            AccountNumber = "1234567890",
+            Amount = new MoneyDto { Amount = 100.00M, Currency = "NGN" }
+        };
+
+        var senderAccount = GetSenderAccount(userId);
+
+        var recipientAccount = GetRecipientAccount(accountNumber: request.AccountNumber);
+
+        var accounts = new List<Data.Entities.Account>
+            {
+                senderAccount,
+                recipientAccount
+            }.BuildMock();
+
+        _unitOfWork.AccountRepository
+            .GetAll()
+            .Returns(accounts);
+
+        _unitOfWork.SaveChangesAsync()
+            .ThrowsAsync(new DbUpdateConcurrencyException());
+
+        // Act
+        var result = await _paymentService.TransferMoney(userId, request);
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldNotBeNull();
+        result.Error.Description.ShouldBe(PaymentServicesErrors.ConcurrencyUpdate.Description);
     }
 
     private Data.Entities.Account GetSenderAccount(long userId) 
